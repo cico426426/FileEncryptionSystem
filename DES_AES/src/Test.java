@@ -10,8 +10,7 @@ public class Test {
 
 	public static void main(String[] args) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
 		// TODO Auto-generated method stub
-		String key = "12345678";
-		Cryptography desCryptography = new DESUtil(key);
+		Cryptography desCryptography = new DESUtil();
 		String encrypt = desCryptography.encrypt("大家好");
 		System.out.println(encrypt);
 		String decrtptString = desCryptography.decrtpt(encrypt);

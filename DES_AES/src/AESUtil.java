@@ -1,7 +1,6 @@
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -17,7 +16,6 @@ public class AESUtil implements Cryptography{
 	private final int DATA_LENGTH = 128;
 	private SecretKey secretKey;
 	private KeyGenerator keyGenerator;
-	private SecureRandom random;
 	private Cipher encryptionCipher;
 	private Cipher decryptionCipher;
 	private Base64Coder base64Coder;
