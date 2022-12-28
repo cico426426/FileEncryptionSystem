@@ -1,11 +1,18 @@
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Test {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, IllegalBlockSizeException {
 		// TODO Auto-generated method stub
 		String key = "12345678";
 		Cryptography desCryptography = new DESUtil(key);
-		String encrypt = desCryptography.encrypt("¤j®a¦n");
+		String encrypt = desCryptography.encrypt("å¤§å®¶å¥½");
 		System.out.println(encrypt);
 		String decrtptString = desCryptography.decrtpt(encrypt);
 		System.out.println(decrtptString);
@@ -14,8 +21,7 @@ public class Test {
 		String aesEncrypt = aesCryptography.encrypt("Hi i addadw");
 		System.out.println(aesEncrypt);
 		String aesDecryptString = aesCryptography.decrtpt(aesEncrypt);
-		System.out.println(aesCryptography);
-	
+		System.out.println(aesDecryptString);
 	}
 
 }
