@@ -1,0 +1,3 @@
+This Java tutorial is to learn about using AES password based encryption (PBE) to encrypt and decrypt a file. In the previous tutorial we saw about using TripleDES PBE to encrypt and decrypt a file. AES is more advanced and secure than TripleDES.
+
+In this tutorial we will have simple text file with plain text. This can be any type of file. We will encrypt this into another file with an extension .des For encryption we will use a plain text password, then an iv which is used to initialize the cipher and a salt which is used for encoding.
