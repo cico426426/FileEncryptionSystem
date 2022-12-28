@@ -40,37 +40,6 @@ public class AESUtil implements Cryptography{
 	}
 
 	@Override
-	public String encrypt(String plain) {
-		// TODO Auto-generated method stub
-		try {
-			encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
-			encryptionCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			byte[] encryptedBytes = encryptionCipher.doFinal(plain.getBytes());
-			return base64Coder.encode(encryptedBytes);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public String decrtpt(String content) {
-		// TODO Auto-generated method stub
-		try {
-			decryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
-			GCMParameterSpec spec = new GCMParameterSpec(DATA_LENGTH, encryptionCipher.getIV());
-			decryptionCipher.init(Cipher.DECRYPT_MODE, secretKey, spec);
-			byte[] decrptedBytes = decryptionCipher.doFinal(base64Coder.decode(content));
-			return new String(decrptedBytes);
-		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
 	public void encrypt(String inputFile, String outputFile) {
 		// TODO Auto-generated method stub
 		try {

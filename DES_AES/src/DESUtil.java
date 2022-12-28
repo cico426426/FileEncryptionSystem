@@ -36,33 +36,6 @@ public class DESUtil implements Cryptography{
 		}
 		
 	}
-	@Override
-	public String encrypt(String plain) {
-		// TODO Auto-generated method stub
-		try {
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			byte[] result = cipher.doFinal(plain.getBytes());
-			return base64Coder.encode(result);
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public String decrtpt(String content) {
-		// TODO Auto-generated method stub
-		try {
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			byte[] result = cipher.doFinal(base64Coder.decode(content));
-			return new String(result);
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	@Override
 	public void encrypt(String inputFile, String outputFile) {
