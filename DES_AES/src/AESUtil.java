@@ -53,7 +53,7 @@ public class AESUtil implements Cryptography{
 	}
 
 	@Override
-	public void decrtpt(String inputFile, String outputFile) {
+	public void decrypt(String inputFile, String outputFile) {
 		// TODO Auto-generated method stub
 		try {
 			decryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");

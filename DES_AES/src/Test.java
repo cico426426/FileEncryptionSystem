@@ -12,11 +12,11 @@ public class Test {
 		// TODO Auto-generated method stub
 		Cryptography desCryptography = new DESUtil();
 		desCryptography.encrypt("C:\\Users\\user\\Desktop\\網路安全\\FileEncryptionSystem\\DES_AES\\src\\1.txt", "C:/Users/user/Desktop/test/2.txt");
-		desCryptography.decrtpt("C:/Users/user/Desktop/test/2.txt", "C:/Users/user/Desktop/test/3.txt");
+		desCryptography.decrypt("C:/Users/user/Desktop/test/2.txt", "C:/Users/user/Desktop/test/3.txt");
 		
 		Cryptography aesCryptography = new AESUtil();
 		aesCryptography.encrypt("C:\\Users\\user\\Desktop\\網路安全\\FileEncryptionSystem\\DES_AES\\src\\1.txt", "C:/Users/user/Desktop/test/4.txt");
-		aesCryptography.decrtpt("C:/Users/user/Desktop/test/4.txt", "C:/Users/user/Desktop/test/5.txt");
+		aesCryptography.decrypt("C:/Users/user/Desktop/test/4.txt", "C:/Users/user/Desktop/test/5.txt");
 	}
 
 }

@@ -51,7 +51,7 @@ public class DESUtil implements Cryptography{
 	}
 
 	@Override
-	public void decrtpt(String inputFile, String outputFile) {
+	public void decrypt(String inputFile, String outputFile) {
 		// TODO Auto-generated method stub
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
