@@ -1,8 +1,10 @@
 package utils
 
+import org.jetbrains.skia.impl.Log
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class Crypt {
@@ -14,7 +16,6 @@ class Crypt {
         const val AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding"
         const val AES_ECB_NO_PADDING = "AES/ECB/NoPadding"
         const val AES_ECB_PKCS5_PADDING = "AES/ECB/PKCS5Padding"
-        const val AES_GCM_No_PADDING = "AES/GCM/NoPadding"
         const val DES_CBC_NO_PADDING = "DES/CBC/NoPadding"
         const val DES_CBC_PKCS5_PADDING = "DES/CBC/PKCS5Padding"
         const val DES_ECB_NO_PADDING = "DES/ECB/NoPadding"
@@ -27,35 +28,17 @@ class Crypt {
     private var files = mutableListOf<File>()
     private var encryptionMethodMismatchFiles = mutableListOf<String>()
 
-    private val ByteArray.asHexUpper: String
-        inline get() {
-            return this.joinToString(separator = "") {
-                String.format("%02X", it)
-            }
-        }
-
-
-    private val String.hexAsByteArray: ByteArray
-        inline get() {
-            return this.chunked(2).map {
-                it.uppercase(Locale.US).toInt(16).toByte()
-            }.toByteArray()
-        }
-
     fun encrypt(type: String, path: List<String>, token: String): String {
         path.forEach {
             this.files.addAll(getFilesUnderPath(it))
         }
 
-        val cipher = Cipher.getInstance(type)
-        val keySpec = getKey(type, token)
-
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
+        val cipher = getCipher(Cipher.ENCRYPT_MODE, type, token)
 
         files.forEach {
-            val f = it.readBytes()
-            val encrypt = cipher.doFinal(f)
-            it.writeText("$type:${encrypt.asHexUpper}")
+            val content = it.readText().toByteArray()
+            val encrypt = cipher.doFinal(content)
+            it.writeText("$type:${String(Base64.getEncoder().encode(encrypt))}")
         }
 
         return getMessages()
@@ -66,10 +49,7 @@ class Crypt {
             this.files.addAll(getFilesUnderPath(it))
         }
 
-        val cipher = Cipher.getInstance(type)
-        val keySpec = getKey(type, token)
-
-        cipher.init(Cipher.DECRYPT_MODE, keySpec)
+        val cipher = getCipher(Cipher.DECRYPT_MODE, type, token)
 
         files.forEach {
             var content = it.readText()
@@ -80,17 +60,46 @@ class Crypt {
             }
 
             content = content.removePrefix("$type:")
-            val decrypt = cipher.doFinal(content.hexAsByteArray)
-            it.writeText(String(decrypt))
+            Log.debug(content)
+            val decrypt = cipher.doFinal(Base64.getDecoder().decode(content))
+            it.writeText(decrypt.decodeToString())
         }
 
         return getMessages()
     }
 
-    private fun getKey(type: String, token: String): SecretKeySpec {
+    private fun getCipher(mode: Int, type: String, token: String): Cipher {
         return when (type) {
-            DES -> SecretKeySpec(token.toByteArray(), DES)
-            AES -> SecretKeySpec(token.toByteArray(), AES)
+            AES, AES_ECB_NO_PADDING, AES_ECB_PKCS5_PADDING -> {
+                val cipher = Cipher.getInstance(type)
+                val secretKeySpec = SecretKeySpec(token.toByteArray(), AES)
+                cipher.init(mode, secretKeySpec)
+                cipher
+            }
+
+            AES_CBC_NO_PADDING, AES_CBC_PKCS5_PADDING -> {
+                val cipher = Cipher.getInstance(type)
+                val secretKeySpec = SecretKeySpec(token.toByteArray(), AES)
+                val ivParameterSpec = IvParameterSpec(token.toByteArray())
+                cipher.init(mode, secretKeySpec, ivParameterSpec)
+                cipher
+            }
+
+            DES, DES_ECB_NO_PADDING, DES_ECB_PKCS5_PADDING -> {
+                val cipher = Cipher.getInstance(type)
+                val secretKeySpec = SecretKeySpec(token.toByteArray(), DES)
+                cipher.init(mode, secretKeySpec)
+                cipher
+            }
+
+            DES_CBC_NO_PADDING, DES_CBC_PKCS5_PADDING -> {
+                val cipher = Cipher.getInstance(type)
+                val secretKeySpec = SecretKeySpec(token.toByteArray(), DES)
+                val ivParameterSpec = IvParameterSpec(token.toByteArray())
+                cipher.init(mode, secretKeySpec, ivParameterSpec)
+                cipher
+            }
+
             else -> throw Exception("Not supported encryption method")
         }
     }
@@ -106,8 +115,7 @@ class Crypt {
     }
 
     private fun getMessages(): String {
-        val processedCount =
-            this.files.count() - this.encryptionMethodMismatchFiles.count()
+        val processedCount = this.files.count() - this.encryptionMethodMismatchFiles.count()
         var message = "$processedCount file(s) processed.\n"
 
         if (this.encryptionMethodMismatchFiles.isNotEmpty()) {

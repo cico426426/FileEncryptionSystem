@@ -87,6 +87,7 @@ fun App(window: ComposeWindow) {
                     }
                 }
             })
+            Spacer(modifier = Modifier.weight(1f))
             Spacer(modifier = Modifier.height(16.dp))
 
             ProcessButtonsRow(onEncryptButtonClick = {
@@ -132,7 +133,8 @@ fun PathField(path: MutableState<List<String>>, onExploreClick: () -> Unit) {
 
 @Composable
 fun TokenField(token: MutableState<String>, tokenSupportingText: MutableState<String>) {
-    OutlinedTextField(token.value,
+    OutlinedTextField(
+        token.value,
         onValueChange = { token.value = it },
         modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         label = { Text("Token") },
@@ -144,7 +146,7 @@ fun TokenField(token: MutableState<String>, tokenSupportingText: MutableState<St
 }
 
 @Composable
-fun ColumnScope.EncryptionMethodRow(
+fun EncryptionMethodRow(
     advancedMethodOptions: MutableState<Boolean>,
     method: MutableState<String>,
     onMethodSelected: (method: String, supportingText: String) -> Unit,
@@ -153,33 +155,24 @@ fun ColumnScope.EncryptionMethodRow(
 ) {
     Text("Encryption Method", fontWeight = FontWeight.Bold)
 
-    Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
+    Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
         when (advancedMethodOptions.value) {
             false -> BasicMethods(
-                method = method,
-                onMethodSelected = onMethodSelected,
-                toggleMethodOptionsButtonText = toggleMethodOptionsButtonText,
-                onToggleMethodOptionsButtonClick = onToggleMethodOptionsButtonClick
+                method = method, onMethodSelected = onMethodSelected
             )
 
             true -> AdvancedMethods(
-                method = method,
-                onMethodSelected = onMethodSelected,
-                toggleMethodOptionsButtonText = toggleMethodOptionsButtonText,
-                onToggleMethodOptionsButtonClick = onToggleMethodOptionsButtonClick
+                method = method, onMethodSelected = onMethodSelected
             )
         }
-
-
     }
+
+    ToggleMethodOptionsButton(text = toggleMethodOptionsButtonText, onClick = onToggleMethodOptionsButtonClick)
 }
 
 @Composable
 fun RowScope.BasicMethods(
-    method: MutableState<String>,
-    onMethodSelected: (method: String, supportingText: String) -> Unit,
-    toggleMethodOptionsButtonText: MutableState<String>,
-    onToggleMethodOptionsButtonClick: () -> Unit
+    method: MutableState<String>, onMethodSelected: (method: String, supportingText: String) -> Unit
 ) {
     MethodRadioButton(modifier = Modifier.weight(1f).wrapContentHeight(),
         method = Crypt.AES,
@@ -191,16 +184,11 @@ fun RowScope.BasicMethods(
         method = Crypt.DES,
         currentMethod = method,
         onMethodSelected = { onMethodSelected(Crypt.DES, Crypt.DES_SUPPORTING_TEXT) })
-
-    ToggleMethodOptionsButton(text = toggleMethodOptionsButtonText, onClick = onToggleMethodOptionsButtonClick)
 }
 
 @Composable
 fun RowScope.AdvancedMethods(
-    method: MutableState<String>,
-    onMethodSelected: (method: String, supportingText: String) -> Unit,
-    toggleMethodOptionsButtonText: MutableState<String>,
-    onToggleMethodOptionsButtonClick: () -> Unit
+    method: MutableState<String>, onMethodSelected: (method: String, supportingText: String) -> Unit
 ) {
     Column(modifier = Modifier.weight(1f).wrapContentHeight()) {
         listOf(
@@ -208,7 +196,6 @@ fun RowScope.AdvancedMethods(
             Crypt.AES_CBC_PKCS5_PADDING,
             Crypt.AES_ECB_NO_PADDING,
             Crypt.AES_ECB_PKCS5_PADDING,
-            Crypt.AES_GCM_No_PADDING
         ).forEach { m ->
             MethodRadioButton(modifier = Modifier.wrapContentSize(),
                 method = m,
@@ -227,8 +214,6 @@ fun RowScope.AdvancedMethods(
                 currentMethod = method,
                 onMethodSelected = { onMethodSelected(m, Crypt.DES_SUPPORTING_TEXT) })
         }
-
-        ToggleMethodOptionsButton(text = toggleMethodOptionsButtonText, onClick = onToggleMethodOptionsButtonClick)
     }
 }
 
